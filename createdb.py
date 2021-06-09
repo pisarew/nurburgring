@@ -11,6 +11,20 @@ def add(car, pilot, front, back, time, date, carid):
         con.commit()
         print(carid, " complite!")
 
+def addPilots(pilot):
+    if pilot == '':
+        return 0
+    cur.execute(f"SELECT * FROM pilots WHERE pilot = '{pilot}'") #f"SELECT cash FROM users WHERE login = '{user_login}'"
+    # records = cur.fetchone()
+    if cur.fetchone() is None:
+        cur.execute("INSERT INTO pilots VALUES (?, ?)", (pilot, 1))
+        con.commit()
+    else:
+        cur.execute(f"SELECT records FROM pilots WHERE pilot = '{pilot}'")
+        records = cur.fetchone()[0]
+        cur.execute(f"UPDATE pilots SET records = {records + 1} WHERE pilot = '{pilot}'")
+        con.commit()
+
 def strcleaner(s_inp):
     s_out = ''
     s_inp = s_inp.lstrip()
@@ -27,13 +41,19 @@ with sq.connect("cars.db") as con:
     cur = sq.Cursor(con)
 
     cur.execute("""CREATE TABLE IF NOT EXISTS cars (
-        car NULL,
+        car TEXT,
         pilot TEXT,
         front TEXT,
         back TEXT,
-        time NULL,
+        time TEXT,
         date TEXT
     )""")
+    con.commit()
+    cur.execute("""CREATE TABLE IF NOT EXISTS pilots (
+        pilot TEXT,
+        records INTEGER
+        )""")
+    
     con.commit()
     fl = 0
     b = 1 # чет/нечет
@@ -54,7 +74,8 @@ with sq.connect("cars.db") as con:
                 carortime = 0
                 if back == '':
                     back = front
-                add(strcleaner(car), strcleaner(pilot), strcleaner(front), strcleaner(back), time, strcleaner(date), car_id)
+                #add(strcleaner(car), strcleaner(pilot), strcleaner(front), strcleaner(back), time, strcleaner(date), car_id)
+                addPilots(strcleaner(pilot))
                 car_id += 1
                 car = ''
                 pilot = ''
