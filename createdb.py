@@ -11,19 +11,21 @@ def add(car, pilot, front, back, time, date, carid):
         con.commit()
         print(carid, " complite!")
 
-def addPilots(pilot):
+def addPilots(pilot, pilotid):
     if pilot == '':
         return 0
     cur.execute(f"SELECT * FROM pilots WHERE pilot = '{pilot}'") #f"SELECT cash FROM users WHERE login = '{user_login}'"
     # records = cur.fetchone()
     if cur.fetchone() is None:
-        cur.execute("INSERT INTO pilots VALUES (?, ?)", (pilot, 1))
+        cur.execute("INSERT INTO pilots VALUES (?, ?, ?)", (pilot, 1, pilotid))
         con.commit()
+        return 1
     else:
         cur.execute(f"SELECT records FROM pilots WHERE pilot = '{pilot}'")
         records = cur.fetchone()[0]
         cur.execute(f"UPDATE pilots SET records = {records + 1} WHERE pilot = '{pilot}'")
         con.commit()
+        return 0
 
 def strcleaner(s_inp):
     s_out = ''
@@ -51,7 +53,8 @@ with sq.connect("cars.db") as con:
     con.commit()
     cur.execute("""CREATE TABLE IF NOT EXISTS pilots (
         pilot TEXT,
-        records INTEGER
+        records INTEGER,
+        id INTEGER
         )""")
     
     con.commit()
@@ -65,6 +68,7 @@ with sq.connect("cars.db") as con:
     time = ''
     date = ''
     carortime = 0
+    pilotid = 0
     for i in range(len(s)):
         if s[i] == '<' and s[i + 1] == 't' and s[i + 18] == 't' and s[i + 17] == 's':   ## Тут вытягиваются машины и время 
             i += 24
@@ -75,7 +79,8 @@ with sq.connect("cars.db") as con:
                 if back == '':
                     back = front
                 #add(strcleaner(car), strcleaner(pilot), strcleaner(front), strcleaner(back), time, strcleaner(date), car_id)
-                addPilots(strcleaner(pilot))
+                x = addPilots(strcleaner(pilot), pilotid)
+                pilotid += x
                 car_id += 1
                 car = ''
                 pilot = ''

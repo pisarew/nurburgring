@@ -1,1 +1,1 @@
-C:\Users\79652\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\LocalCache\local-packages\Python39\Scripts\pyuic5.exe -x C:\Users\79652\Desktop\nurburgring\table.ui -o C:\Users\79652\Desktop\nurburgring\table.py 
+C:\Users\79652\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\LocalCache\local-packages\Python39\Scripts\pyuic5.exe -x C:\Users\79652\Desktop\nurburgring\pilot.ui -o C:\Users\79652\Desktop\nurburgring\pilotwindw.py 
