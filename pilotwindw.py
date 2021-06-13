@@ -9,18 +9,35 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from pyqtgraph.graphicsItems.ViewBox.ViewBox import ViewBox
 
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(800, 500)
+        Dialog.resize(805, 507)
         self.label = QtWidgets.QLabel(Dialog)
-        self.label.setGeometry(QtCore.QRect(260, 10, 261, 121))
+        self.label.setGeometry(QtCore.QRect(9, 9, 781, 71))
         font = QtGui.QFont()
         font.setPointSize(36)
         self.label.setFont(font)
+        self.label.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.label.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.label.setToolTipDuration(-1)
+        self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.label.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.label.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.label.setLineWidth(1)
+        self.label.setTextFormat(QtCore.Qt.AutoText)
+        self.label.setIndent(0)
         self.label.setObjectName("label")
+        self.widgetGraph = PlotWidget(view)
+        self.widgetGraph.setGeometry(QtCore.QRect(9, 127, 471, 371))
+        self.widgetGraph.setObjectName("widgetGraph")
+        self.widgetGraph.
+        self.label_2 = QtWidgets.QLabel(Dialog)
+        self.label_2.setGeometry(QtCore.QRect(510, 130, 271, 361))
+        self.label_2.setObjectName("label_2")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -29,6 +46,8 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.label.setText(_translate("Dialog", "Пилот"))
+        self.label_2.setText(_translate("Dialog", "TextLabel"))
+from pyqtgraph import PlotWidget
 
 
 if __name__ == "__main__":
