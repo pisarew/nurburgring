@@ -7,10 +7,7 @@ from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 import sqlite3 as sq
 from pyqtgraph.Qt import QtCore, QtGui
-#from graph import CustomViewBox, CustomTickSliderItem
 import numpy as np
-import time
-
 
 def time(name):
     with sq.connect("cars.db") as con:
@@ -74,6 +71,19 @@ def date(name):
         return result
 
 
+def bestTime(name):
+    with sq.connect("cars.db") as con:
+        cur = sq.Cursor(con)
+        cur.execute(f"SELECT time FROM cars WHERE pilot = '{name}'")
+        cars = cur.fetchone()
+        return cars[0]
+
+def sumRecords(name):
+    with sq.connect("cars.db") as con:
+        cur = sq.Cursor(con)
+        cur.execute(f"SELECT records FROM pilots WHERE pilot = '{name}'")
+        cars = cur.fetchone()
+        return cars[0]
 
 def addData(table):
     with sq.connect("cars.db") as con:
@@ -99,6 +109,7 @@ def addData(table):
         cars = cur.fetchall()
 
         pilotButton = [button1] * len(cars)
+        button1.hide()
         for i in range(len(cars)):
             pilotButton[i] = QtWidgets.QPushButton(table.centralwidget)
 
@@ -214,10 +225,6 @@ class pilotStat(QDialog, table): #Окно пилота
         QDialog.__init__(self)
         loadUi("pilot.ui", self)
         self.label.setText(pilotName)
-        # grid = QtWidgets.QGridLayout(self)
-        # grid.addWidget(self.widgetGraph, 0, 0)
-        # self.plot([1,2,3,4,5,6,7,8,9,10], [30,32,34,32,33,31,29,32,35,45])
-
 
         app = pg.mkQApp()
 
@@ -230,7 +237,6 @@ class pilotStat(QDialog, table): #Окно пилота
 
         dates = date(pilotName)
         dates.sort()
-        # dates[1] += 100000000
 
         
         yArr = time(pilotName)
@@ -244,36 +250,25 @@ class pilotStat(QDialog, table): #Окно пилота
         vb.sigXRangeChanged.connect(tickViewer.updateRange)
         pw.plotItem.layout.addItem(tickViewer, 4, 1)
 
-        # tickViewer.setTicks( [dates[0], dates[2], dates[-1]] )
+        tickViewer.setTicks( [dates[0], dates[-1]] )
 
         # pw.show()
         # pw.setWindowTitle('pyqtgraph example: customPlot')
 
        
-
-        r = pg.PolyLineROI([(5,5), (10, 10)])
-        pw.addItem(r)
-        grid = QtWidgets.QVBoxLayout(self)
+        grid = QtWidgets.QGridLayout(self)
         grid.addWidget(self.label)
         grid.addWidget(pw)
+        best = bestTime(pilotName)
+        self.label_2.setText("Лучшее время: " + best)
+        grid.addWidget(self.label_2)
+        x = str(sumRecords(pilotName))
+        self.label_3.setText("Количество рекордов: " + x)
+        grid.addWidget(self.label_3)
+        
         # self.widgetGraph = pw
 
     
-
-
-
-    # def plot(self, hour, temperature): ## Построение графика
-    #     self.widgetGraph.plot(hour, temperature)
-        
-    # def plot(self, name):
-        # with sq.connect("cars.db") as con:
-        #     cur = sq.Cursor(con)
-        #     cur.execute("SELECT * WHERE pilot = '{name}'")
-        #     result = cur.fetchall()
-        #     deta = [''] * len(result)
-        #     time = [''] * len(result)
-        #     for i in result:
-
 
 def timeCalculate(time):
     x = float(time[0]) + ((float(time[2:4]) * 10) / 600)

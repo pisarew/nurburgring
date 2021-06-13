@@ -14,7 +14,8 @@
    <string>Nurburgring</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(56, 62, 67);</string>
+   <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(255, 255, 255);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -33,8 +34,8 @@ color: rgb(255, 255, 255);</string>
      <widget class="QTableWidget" name="tableWidget">
       <property name="styleSheet">
        <string notr="true">selection-background-color: rgb(0, 0, 0);
-background-color: rgb(74, 74, 74);
-color: rgb(238, 238, 238);
+background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);
 selection-color: rgb(40, 255, 2);</string>
       </property>
      </widget>
