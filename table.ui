@@ -30,6 +30,17 @@ color: rgb(255, 255, 255);</string>
       </property>
      </widget>
     </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(170, 96, 255);
+color: rgb(255, 255, 255);</string>
+      </property>
+      <property name="text">
+       <string>Добавить рекорд</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0" colspan="4">
      <widget class="QTableWidget" name="tableWidget">
       <property name="styleSheet">
@@ -43,11 +54,11 @@ selection-color: rgb(40, 255, 2);</string>
     <item row="1" column="3">
      <widget class="QPushButton" name="pushButton_4">
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(170, 96, 255);
+       <string notr="true">background-color: rgb(255, 0, 0);
 color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
-       <string>PushButton</string>
+       <string>Удалить данные!</string>
       </property>
      </widget>
     </item>
@@ -58,18 +69,7 @@ color: rgb(255, 255, 255);</string>
 color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(170, 96, 255);
-color: rgb(255, 255, 255);</string>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
+       <string>Загрузить данные</string>
       </property>
      </widget>
     </item>

@@ -9,15 +9,15 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from pyqtgraph.graphicsItems.ViewBox.ViewBox import ViewBox
 
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(805, 507)
+        self.gridLayout = QtWidgets.QGridLayout(Dialog)
+        self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(Dialog)
-        self.label.setGeometry(QtCore.QRect(9, 9, 781, 71))
         font = QtGui.QFont()
         font.setPointSize(36)
         self.label.setFont(font)
@@ -31,23 +31,29 @@ class Ui_Dialog(object):
         self.label.setTextFormat(QtCore.Qt.AutoText)
         self.label.setIndent(0)
         self.label.setObjectName("label")
-        self.widgetGraph = PlotWidget(view)
-        self.widgetGraph.setGeometry(QtCore.QRect(9, 127, 471, 371))
-        self.widgetGraph.setObjectName("widgetGraph")
-        self.widgetGraph.
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1, QtCore.Qt.AlignHCenter)
         self.label_2 = QtWidgets.QLabel(Dialog)
-        self.label_2.setGeometry(QtCore.QRect(510, 130, 271, 361))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+        self.label_3 = QtWidgets.QLabel(Dialog)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "Pilot"))
         self.label.setText(_translate("Dialog", "Пилот"))
-        self.label_2.setText(_translate("Dialog", "TextLabel"))
-from pyqtgraph import PlotWidget
+        self.label_2.setText(_translate("Dialog", "Лучшее время:"))
+        self.label_3.setText(_translate("Dialog", "Количество рекордов:"))
 
 
 if __name__ == "__main__":

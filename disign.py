@@ -8,19 +8,22 @@ import pyqtgraph as pg
 import sqlite3 as sq
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
+from createdb import parsingandcreate
+import threading
+import time
 
-def time(name):
+def pilotTime(name):
     with sq.connect("cars.db") as con:
         cur = sq.Cursor(con)
         cur.execute(f"SELECT * FROM cars WHERE pilot = '{name}'")
         result = cur.fetchall()
         
-        time = [0] * len(result)
+        timed = [0] * len(result)
         j = 0
         for i in result:
-            time[j] = round(timeCalculate(i[4]), 2)
+            timed[j] = round(timeCalculate(i[4]), 2)
             j += 1
-        return time
+        return timed
 
 def dateConvertor(st):
     if st.lower() == 'январь' or st.lower() == 'января':
@@ -144,6 +147,9 @@ class table(QMainWindow):
         #self.tableWidget.setStretchLastSection(True)
         self.tableWidget.setSortingEnabled(True)
         self.tableWidget.setHorizontalHeaderLabels(["car", "pilot", "front", "back", "time", "date"])
+        self.pushButton_2.clicked.connect(self.addColumn)
+        self.pushButton_3.clicked.connect(self.loadData)
+        self.pushButton_4.clicked.connect(self.delete)
         
         
         #Всплывающие подсказки
@@ -160,7 +166,68 @@ class table(QMainWindow):
         pilotWindow = pilotStat(sender.text())
         pilotWindow.show()
         pilotWindow.exec_()
+    
+    def addColumn(self):
+        Window = addWindow()
+        Window.show()
+        Window.exec_()
 
+    def delete(self):
+        with sq.connect("cars.db") as con:
+            cur = sq.Cursor(con)
+            cur.execute("DROP TABLE cars;")
+            con.commit()
+            cur.execute("DROP TABLE pilots;")
+            con.commit()
+            cur.execute("""CREATE TABLE IF NOT EXISTS cars (
+                car TEXT,
+                pilot TEXT,
+                front TEXT,
+                back TEXT,
+                time TEXT,
+                date TEXT
+                )""")
+            con.commit()
+            cur.execute("""CREATE TABLE IF NOT EXISTS pilots (
+                pilot TEXT,
+                records INTEGER,
+                id INTEGER
+                )""")
+            
+            con.commit()
+            addData(self)
+
+    def loadData(self):
+        def parsingStart():
+            parsingandcreate()
+            pilotWindow.hide()
+        pilotWindow = loadingWindow()
+        pilotWindow.show()
+        t = threading.Thread(target=parsingStart)
+        t.start()
+        pilotWindow.exec_()
+        
+        j = 0
+        for i in addData(self):
+            j += 1
+            i.clicked.connect(self.pilotClick)
+        
+        
+
+class loadingWindow(QDialog, table):
+    def __init__(self):
+        QDialog.__init__(self)
+        loadUi("loading.ui", self)
+        n = 500
+        self.progressBar.setMinimum(0)
+        self.progressBar.setMaximum(n)
+        self.progressBar.setValue(0)
+        y = threading.Thread(target=self.run)
+        y.start()
+    def run(self):
+        for i in range(500):
+            time.sleep(0.02)
+            self.progressBar.setValue(i + 1)
 
 #класс спизженый из документации pyqtgraph
 class CustomViewBox(pg.ViewBox):
@@ -239,7 +306,7 @@ class pilotStat(QDialog, table): #Окно пилота
         dates.sort()
 
         
-        yArr = time(pilotName)
+        yArr = pilotTime(pilotName)
         print(dates)
         print(yArr)
         
@@ -258,6 +325,7 @@ class pilotStat(QDialog, table): #Окно пилота
        
         grid = QtWidgets.QGridLayout(self)
         grid.addWidget(self.label)
+        self.label.setLayoutDirection(QtCore.Qt.LeftToRight)
         grid.addWidget(pw)
         best = bestTime(pilotName)
         self.label_2.setText("Лучшее время: " + best)
@@ -268,7 +336,10 @@ class pilotStat(QDialog, table): #Окно пилота
         
         # self.widgetGraph = pw
 
-    
+class addWindow(QDialog, table):
+       def __init__(self):
+            QDialog.__init__(self)
+            loadUi("addColumn.ui", self)
 
 def timeCalculate(time):
     x = float(time[0]) + ((float(time[2:4]) * 10) / 600)
