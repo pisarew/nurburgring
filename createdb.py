@@ -1,9 +1,17 @@
 import sqlite3 as sq
 import requests
-
+import sys
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem
+from PyQt5.uic import loadUi
+from PyQt5.QtCore import QSize, Qt
+import threading
+import time
 
 r = requests.get('http://www.nuerburgring.ru/info/lap_times_records.html')
 s = str(r.text)
+
+load_iter = 0
 
 def add(car, pilot, front, back, time, date, carid):
     if carid > 0:
@@ -43,7 +51,7 @@ def strcleaner(s_inp):
     else:
         return s_out
 
-def parsingandcreate():
+def parsingandcreate(load):
     with sq.connect("cars.db") as con:
         cur = sq.Cursor(con)
 
@@ -87,6 +95,11 @@ def parsingandcreate():
                     x = addPilots(strcleaner(pilot), pilotid)
                     pilotid += x
                     car_id += 1
+                    if car_id < 135:
+                        load.progressBar.setValue(car_id)
+                    else:
+                        load.progressBar.setValue(car_id)
+                        load.label.setText("Подключение к базе данных...")
                     car = ''
                     pilot = ''
                     front = ''

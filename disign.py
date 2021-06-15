@@ -12,6 +12,8 @@ from createdb import parsingandcreate
 import threading
 import time
 
+
+
 def pilotTime(name):
     with sq.connect("cars.db") as con:
         cur = sq.Cursor(con)
@@ -199,7 +201,7 @@ class table(QMainWindow):
 
     def loadData(self):
         def parsingStart():
-            parsingandcreate()
+            parsingandcreate(pilotWindow)
             pilotWindow.hide()
         pilotWindow = loadingWindow()
         pilotWindow.show()
@@ -218,16 +220,11 @@ class loadingWindow(QDialog, table):
     def __init__(self):
         QDialog.__init__(self)
         loadUi("loading.ui", self)
-        n = 500
+        n = 160
         self.progressBar.setMinimum(0)
         self.progressBar.setMaximum(n)
         self.progressBar.setValue(0)
-        y = threading.Thread(target=self.run)
-        y.start()
-    def run(self):
-        for i in range(500):
-            time.sleep(0.02)
-            self.progressBar.setValue(i + 1)
+        
 
 #класс спизженый из документации pyqtgraph
 class CustomViewBox(pg.ViewBox):
@@ -337,9 +334,30 @@ class pilotStat(QDialog, table): #Окно пилота
         # self.widgetGraph = pw
 
 class addWindow(QDialog, table):
-       def __init__(self):
-            QDialog.__init__(self)
-            loadUi("addColumn.ui", self)
+    def __init__(self):
+        QDialog.__init__(self)
+        loadUi("addColumn.ui", self)
+        self.accepted.connect(self.accept)
+        # self.buttonBox.rejected.connect(self.reject)   
+    def accept(self):
+        car = self.lineEdit.text()
+        pilot = self.lineEdit_2.text()
+        front = self.lineEdit_3.text()
+        back = self.lineEdit_4.text()
+        time = self.lineEdit_5.text()
+        date = self.lineEdit_6.text()
+        with sq.connect("cars.db") as con:
+            cur = sq.Cursor(con)
+            cur.execute(f"INSERT INTO cars VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
+            con.commit()
+        addData(mainwindow)
+        j = 0
+        for i in addData(self):
+            j += 1
+            i.clicked.connect(self.pilotClick)
+
+
+
 
 def timeCalculate(time):
     x = float(time[0]) + ((float(time[2:4]) * 10) / 600)
