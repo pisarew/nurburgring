@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem
+from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QMessageBox
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import QSize, Qt
 from pyqtgraph import PlotWidget, plot
@@ -96,6 +96,9 @@ def addData(table):
         button1 = QtWidgets.QPushButton(table.centralwidget)
 
         button1.setObjectName('button1')
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        button1.setFont(font)
         button1.setText('mutton1')
         
 
@@ -117,7 +120,9 @@ def addData(table):
         button1.hide()
         for i in range(len(cars)):
             pilotButton[i] = QtWidgets.QPushButton(table.centralwidget)
-
+            font = QtGui.QFont()
+            font.setPointSize(12)
+            pilotButton[i].setFont(font)
         table.tableWidget.setRowCount(len(cars))
         for i in range(len(cars)):
             table.tableWidget.setItem(i, 0, QTableWidgetItem(cars[i][0]))
@@ -149,6 +154,7 @@ class table(QMainWindow):
         #self.tableWidget.setStretchLastSection(True)
         self.tableWidget.setSortingEnabled(True)
         self.tableWidget.setHorizontalHeaderLabels(["car", "pilot", "front", "back", "time", "date"])
+        self.pushButton.clicked.connect(self.search)
         self.pushButton_2.clicked.connect(self.addColumn)
         self.pushButton_3.clicked.connect(self.loadData)
         self.pushButton_4.clicked.connect(self.delete)
@@ -162,6 +168,11 @@ class table(QMainWindow):
             j += 1
             i.clicked.connect(self.pilotClick)
     
+    def search(self):
+        window = searchWindow()
+        window.show()
+        window.exec_()
+
     def pilotClick(self): #Сробатывает когда нажимаем на пилота
         sender = self.sender()
         print(sender.text() + ' was pressed')
@@ -214,7 +225,58 @@ class table(QMainWindow):
             j += 1
             i.clicked.connect(self.pilotClick)
         
+
+class searchWindow(QDialog, table):
+    def __init__(self):
+        QDialog.__init__(self)
+        loadUi("search.ui", self)
+        self.comboBox.addItem("Автомобиль")
+        self.comboBox.addItem("Пилот")
+        self.comboBox.addItem("Шины")
+        self.comboBox.addItem("Время круга")
+        self.comboBox.addItem("Дата")
+        self.accepted.connect(self.accept)
+    def accept(self):
+        searchText = self.lineEdit.text()
+        searchCategori = self.comboBox.currentText()
         
+        window = searchResult(searchCategori, searchText)
+        window.show()
+        window.exec_()
+
+
+class searchResult(QDialog, table):
+    def __init__(self, categori, text):
+        QDialog.__init__(self)
+        loadUi("searchResult.ui", self)
+        with sq.connect("cars.db") as con:
+            cur = sq.Cursor(con)
+
+            if categori == 'Автомобиль':
+                cur.execute(f"SELECT * FROM cars WHERE car = '{text}'")
+            elif categori == 'Пилот':
+                cur.execute(f"SELECT * FROM cars WHERE pilot = '{text}'")
+            elif categori == 'Шины':
+                cur.execute(f"SELECT * FROM cars WHERE back = '{text}'")
+            elif categori == 'Время круга':
+                cur.execute(f"SELECT * FROM cars WHERE time = '{text}'")
+            elif categori == 'Дата':
+                cur.execute(f"SELECT * FROM cars WHERE date = '{text}'")
+
+            table = cur.fetchall()
+            print(table)
+            self.tableWidget.setColumnCount(6)
+            self.tableWidget.setRowCount(len(table))
+            self.tableWidget.setSortingEnabled(True)
+            self.tableWidget.setHorizontalHeaderLabels(["car", "pilot", "front", "back", "time", "date"])
+            for i in range(len(table)):
+                self.tableWidget.setItem(i, 0, QTableWidgetItem(table[i][0]))
+                self.tableWidget.setItem(i, 1, QTableWidgetItem(table[i][1]))
+                self.tableWidget.setItem(i, 2, QTableWidgetItem(table[i][2]))
+                self.tableWidget.setItem(i, 3, QTableWidgetItem(table[i][3]))
+                self.tableWidget.setItem(i, 4, QTableWidgetItem(table[i][4]))
+                self.tableWidget.setItem(i, 5, QTableWidgetItem(table[i][5]))
+            self.tableWidget.resizeColumnsToContents()
 
 class loadingWindow(QDialog, table):
     def __init__(self):
@@ -346,15 +408,29 @@ class addWindow(QDialog, table):
         back = self.lineEdit_4.text()
         time = self.lineEdit_5.text()
         date = self.lineEdit_6.text()
-        with sq.connect("cars.db") as con:
-            cur = sq.Cursor(con)
-            cur.execute(f"INSERT INTO cars VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
-            con.commit()
-        addData(mainwindow)
-        j = 0
-        for i in addData(self):
-            j += 1
-            i.clicked.connect(self.pilotClick)
+        if car == '' or time == '' or not time[0].isdigit() or not time[2:4].isdigit():
+            error = QMessageBox()
+            error.setWindowTitle("Ошибка")
+            error.setText("Не заполненны поля")
+            error.show()
+            error.exec_()
+        else:
+            if int(time[2:4]) > 59:
+                error = QMessageBox()
+                error.setWindowTitle("Ошибка")
+                error.setText("Недопустимое время!")
+                error.show()
+                error.exec_()
+            else:
+                with sq.connect("cars.db") as con:
+                    cur = sq.Cursor(con)
+                    cur.execute(f"INSERT INTO cars VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
+                    con.commit()
+                j = 0
+                for i in addData(mainwindow):
+                    j += 1
+                    i.clicked.connect(mainwindow.pilotClick)
+                self.hide()
 
 
 
@@ -366,9 +442,6 @@ def timeCalculate(time):
 
 app = QApplication(sys.argv)
 mainwindow = table()
-# widget = QtWidgets.QStackedWidget()
-# widget.addWidget(mainwindow)
-
 mainwindow.show()
 
 app.exec_()

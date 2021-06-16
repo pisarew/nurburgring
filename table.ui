@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1460</width>
+    <width>1300</width>
     <height>691</height>
    </rect>
   </property>
@@ -21,17 +21,27 @@ color: rgb(255, 255, 255);</string>
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
      <widget class="QPushButton" name="pushButton">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(170, 96, 255);
 color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
-       <string>Пилоты</string>
+       <string>Поиск</string>
       </property>
      </widget>
     </item>
     <item row="1" column="1">
      <widget class="QPushButton" name="pushButton_2">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(170, 96, 255);
 color: rgb(255, 255, 255);</string>
@@ -43,6 +53,11 @@ color: rgb(255, 255, 255);</string>
     </item>
     <item row="0" column="0" colspan="4">
      <widget class="QTableWidget" name="tableWidget">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">selection-background-color: rgb(0, 0, 0);
 background-color: rgb(255, 255, 255);
@@ -53,6 +68,11 @@ selection-color: rgb(40, 255, 2);</string>
     </item>
     <item row="1" column="3">
      <widget class="QPushButton" name="pushButton_4">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(255, 0, 0);
 color: rgb(255, 255, 255);</string>
@@ -64,6 +84,11 @@ color: rgb(255, 255, 255);</string>
     </item>
     <item row="1" column="2">
      <widget class="QPushButton" name="pushButton_3">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(170, 96, 255);
 color: rgb(255, 255, 255);</string>
