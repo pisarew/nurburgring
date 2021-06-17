@@ -1,0 +1,7 @@
+/sqlite3.def
+/sqlite3.dll
+/sqlite3.exe
+/test.py
+/__pycache__/
+/addColumn.py
+/createpy.bat

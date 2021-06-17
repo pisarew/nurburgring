@@ -17,9 +17,11 @@ def add(car, pilot, front, back, time, date, carid):
     if carid > 0:
         with sq.connect("cars.db") as con:
             cur = sq.Cursor(con)
-            cur.execute(f"INSERT INTO cars VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
-            con.commit()
-            print(carid, " complite!")
+            cur.execute(f"SELECT * FROM cars WHERE car = '{car}' AND time = '{time}'")
+            if cur.fetchone() is None:
+                cur.execute(f"INSERT INTO cars VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
+                con.commit()
+                print(carid, " complite!")
 
 def addPilots(pilot, pilotid):
     with sq.connect("cars.db") as con:

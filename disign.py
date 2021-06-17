@@ -100,19 +100,6 @@ def addData(table):
         font.setPointSize(12)
         button1.setFont(font)
         button1.setText('mutton1')
-        
-
-        # pilotButton = [button1] * 38
-        # cur.execute("SELECT pilot FROM pilots;")
-        # pilots = cur.fetchall()
-        # j = 0
-        # for i in pilotButton:
-        #     i.setText(pilots[j][0])
-        #     j += 1
-
-        
-
-        
         cur.execute("SELECT * FROM cars;")
         cars = cur.fetchall()
 
@@ -126,16 +113,6 @@ def addData(table):
         table.tableWidget.setRowCount(len(cars))
         for i in range(len(cars)):
             table.tableWidget.setItem(i, 0, QTableWidgetItem(cars[i][0]))
-            # table.tableWidget.setItem(i, 1, QTableWidgetItem(cars[i][1]))
-
-            # cur.execute(f"SELECT id FROM pilots WHERE pilot = '{cars[i][1]}'")
-            # if cur.fetchone() is not None:
-            #     cur.execute(f"SELECT id FROM pilots WHERE pilot = '{cars[i][1]}'")
-            #     j = cur.fetchone()[0]
-            #     table.tableWidget.setCellWidget(i, 1, pilotButton[j])
-            # else:
-            #     table.tableWidget.setItem(i, 1, QTableWidgetItem('Водителя нет'))
-
             table.tableWidget.setCellWidget(i, 1, pilotButton[i])
             pilotButton[i].setText(cars[i][1])
 
@@ -212,13 +189,13 @@ class table(QMainWindow):
 
     def loadData(self):
         def parsingStart():
-            parsingandcreate(pilotWindow)
-            pilotWindow.hide()
-        pilotWindow = loadingWindow()
-        pilotWindow.show()
+            parsingandcreate(Window)
+            Window.hide()
+        Window = loadingWindow()
+        Window.show()
         t = threading.Thread(target=parsingStart)
         t.start()
-        pilotWindow.exec_()
+        Window.exec_()
         
         j = 0
         for i in addData(self):
@@ -426,6 +403,9 @@ class addWindow(QDialog, table):
                     cur = sq.Cursor(con)
                     cur.execute(f"INSERT INTO cars VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
                     con.commit()
+                    cur.execute(f"SELECT * FROM pilots WHERE pilot = '{pilot}'")
+                    if cur.fetchone() is None:
+                        cur.execute(f"INSERT INTO pilots VALUES (?, ?, ?)", (pilot, 1, -1))
                 j = 0
                 for i in addData(mainwindow):
                     j += 1
@@ -438,6 +418,24 @@ class addWindow(QDialog, table):
 def timeCalculate(time):
     x = float(time[0]) + ((float(time[2:4]) * 10) / 600)
     return x
+
+with sq.connect("cars.db") as con:
+        cur = sq.Cursor(con)
+
+        cur.execute("""CREATE TABLE IF NOT EXISTS cars (
+            car TEXT,
+            pilot TEXT,
+            front TEXT,
+            back TEXT,
+            time TEXT,
+            date TEXT
+        )""")
+        con.commit()
+        cur.execute("""CREATE TABLE IF NOT EXISTS pilots (
+            pilot TEXT,
+            records INTEGER,
+            id INTEGER
+            )""")
 
 
 app = QApplication(sys.argv)
