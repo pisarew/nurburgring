@@ -14,6 +14,11 @@ s = str(r.text)
 
 load_iter = 0
 
+def timeCalculate(Time):
+    x = float(Time[0]) + ((float(Time[2:4]) * 10) / 600)
+    return x
+
+
 def add(car, pilot, front, back, time, date, carid):
     if carid > 0:
         with sq.connect("nurburgring.db") as con:
@@ -54,6 +59,19 @@ def strcleaner(s_inp):
     else:
         return s_out
 
+def addCar(car, TIME, date):
+    with sq.connect("nurburgring.db") as con:
+        cur = sq.Cursor(con)
+        if car.find("Alfa Romeo") != -1:
+            brand = car[:10]
+            model = car[11:]
+        else:
+            brand = car[:car.find(" ")]
+            model = car[car.find(" "):]
+        cur.execute("INSERT INTO cars VALUES (?, ?, ?, ?)", (brand, model, TIME, date))
+        con.commit()
+
+
 def parsingandcreate(load):
     with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
@@ -74,6 +92,16 @@ def parsingandcreate(load):
             )""")
         
         con.commit()
+
+        cur.execute("""CREATE TABLE IF NOT EXISTS cars (
+            brand TEXT,
+            model TEXT,
+            time INTEGER,
+            date TEXT
+            )""")
+        
+        con.commit()
+
         fl = 0
         b = 1 # чет/нечет
         car_id = 0 
@@ -96,6 +124,8 @@ def parsingandcreate(load):
                         back = front
                     add(strcleaner(car), strcleaner(pilot), strcleaner(front), strcleaner(back), time, strcleaner(date), car_id)
                     x = addPilots(strcleaner(pilot), pilotid)
+                    if car_id > 0:
+                        addCar(strcleaner(car), timeCalculate(time), strcleaner(date))
                     pilotid += x
                     car_id += 1
                     if car_id < 135:

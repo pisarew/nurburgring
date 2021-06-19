@@ -169,6 +169,8 @@ class table(QMainWindow):
             con.commit()
             cur.execute("DROP TABLE pilots;")
             con.commit()
+            cur.execute("DROP TABLE cars;")
+            con.commit()
             cur.execute("""CREATE TABLE IF NOT EXISTS main (
                 car TEXT,
                 pilot TEXT,
@@ -184,6 +186,15 @@ class table(QMainWindow):
                 id INTEGER
                 )""")
             
+            con.commit()
+
+            cur.execute("""CREATE TABLE IF NOT EXISTS cars (
+            brand TEXT,
+            model TEXT,
+            time INTEGER,
+            date TEXT
+            )""")
+        
             con.commit()
             addData(self)
 
@@ -416,8 +427,8 @@ class addWindow(QDialog, table):
 
 
 
-def timeCalculate(time):
-    x = float(time[0]) + ((float(time[2:4]) * 10) / 600)
+def timeCalculate(Time):
+    x = float(Time[0]) + ((float(Time[2:4]) * 10) / 600)
     return x
 
 with sq.connect("nurburgring.db") as con:
@@ -437,6 +448,15 @@ with sq.connect("nurburgring.db") as con:
             records INTEGER,
             id INTEGER
             )""")
+
+        cur.execute("""CREATE TABLE IF NOT EXISTS cars (
+            brand TEXT,
+            model TEXT,
+            time INTEGER,
+            date TEXT
+            )""")
+        
+        con.commit()
 
 
 app = QApplication(sys.argv)
