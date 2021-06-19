@@ -7,6 +7,7 @@ from PyQt5.uic import loadUi
 from PyQt5.QtCore import QSize, Qt
 import threading
 import time
+ 
 
 r = requests.get('http://www.nuerburgring.ru/info/lap_times_records.html')
 s = str(r.text)
@@ -15,16 +16,16 @@ load_iter = 0
 
 def add(car, pilot, front, back, time, date, carid):
     if carid > 0:
-        with sq.connect("cars.db") as con:
+        with sq.connect("nurburgring.db") as con:
             cur = sq.Cursor(con)
-            cur.execute(f"SELECT * FROM cars WHERE car = '{car}' AND time = '{time}'")
+            cur.execute(f"SELECT * FROM main WHERE car = '{car}' AND time = '{time}'")
             if cur.fetchone() is None:
-                cur.execute(f"INSERT INTO cars VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
+                cur.execute(f"INSERT INTO main VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
                 con.commit()
                 print(carid, " complite!")
 
 def addPilots(pilot, pilotid):
-    with sq.connect("cars.db") as con:
+    with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
         if pilot == '':
             return 0
@@ -54,10 +55,10 @@ def strcleaner(s_inp):
         return s_out
 
 def parsingandcreate(load):
-    with sq.connect("cars.db") as con:
+    with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
 
-        cur.execute("""CREATE TABLE IF NOT EXISTS cars (
+        cur.execute("""CREATE TABLE IF NOT EXISTS main (
             car TEXT,
             pilot TEXT,
             front TEXT,

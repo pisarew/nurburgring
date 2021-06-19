@@ -15,9 +15,9 @@ import time
 
 
 def pilotTime(name):
-    with sq.connect("cars.db") as con:
+    with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
-        cur.execute(f"SELECT * FROM cars WHERE pilot = '{name}'")
+        cur.execute(f"SELECT * FROM main WHERE pilot = '{name}'")
         result = cur.fetchall()
         
         timed = [0] * len(result)
@@ -56,9 +56,9 @@ def dateConvertor(st):
         return '09'
 
 def date(name):
-    with sq.connect("cars.db") as con:
+    with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
-        cur.execute(f"SELECT * FROM cars WHERE pilot = '{name}'")
+        cur.execute(f"SELECT * FROM main WHERE pilot = '{name}'")
         cars = cur.fetchall()
         result = [0] * len(cars)
         j = 0
@@ -77,21 +77,21 @@ def date(name):
 
 
 def bestTime(name):
-    with sq.connect("cars.db") as con:
+    with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
-        cur.execute(f"SELECT time FROM cars WHERE pilot = '{name}'")
+        cur.execute(f"SELECT time FROM main WHERE pilot = '{name}'")
         cars = cur.fetchone()
         return cars[0]
 
 def sumRecords(name):
-    with sq.connect("cars.db") as con:
+    with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
         cur.execute(f"SELECT records FROM pilots WHERE pilot = '{name}'")
         cars = cur.fetchone()
         return cars[0]
 
 def addData(table):
-    with sq.connect("cars.db") as con:
+    with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
         button1 = QtWidgets.QPushButton(table.centralwidget)
 
@@ -100,7 +100,7 @@ def addData(table):
         font.setPointSize(12)
         button1.setFont(font)
         button1.setText('mutton1')
-        cur.execute("SELECT * FROM cars;")
+        cur.execute("SELECT * FROM main;")
         cars = cur.fetchall()
 
         pilotButton = [button1] * len(cars)
@@ -163,13 +163,13 @@ class table(QMainWindow):
         Window.exec_()
 
     def delete(self):
-        with sq.connect("cars.db") as con:
+        with sq.connect("nurburgring.db") as con:
             cur = sq.Cursor(con)
-            cur.execute("DROP TABLE cars;")
+            cur.execute("DROP TABLE main;")
             con.commit()
             cur.execute("DROP TABLE pilots;")
             con.commit()
-            cur.execute("""CREATE TABLE IF NOT EXISTS cars (
+            cur.execute("""CREATE TABLE IF NOT EXISTS main (
                 car TEXT,
                 pilot TEXT,
                 front TEXT,
@@ -226,19 +226,19 @@ class searchResult(QDialog, table):
     def __init__(self, categori, text):
         QDialog.__init__(self)
         loadUi("searchResult.ui", self)
-        with sq.connect("cars.db") as con:
+        with sq.connect("nurburgring.db") as con:
             cur = sq.Cursor(con)
 
             if categori == 'Автомобиль':
-                cur.execute(f"SELECT * FROM cars WHERE car = '{text}'")
+                cur.execute(f"SELECT * FROM main WHERE car = '{text}'")
             elif categori == 'Пилот':
-                cur.execute(f"SELECT * FROM cars WHERE pilot = '{text}'")
+                cur.execute(f"SELECT * FROM main WHERE pilot = '{text}'")
             elif categori == 'Шины':
-                cur.execute(f"SELECT * FROM cars WHERE back = '{text}'")
+                cur.execute(f"SELECT * FROM main WHERE back = '{text}'")
             elif categori == 'Время круга':
-                cur.execute(f"SELECT * FROM cars WHERE time = '{text}'")
+                cur.execute(f"SELECT * FROM main WHERE time = '{text}'")
             elif categori == 'Дата':
-                cur.execute(f"SELECT * FROM cars WHERE date = '{text}'")
+                cur.execute(f"SELECT * FROM main WHERE date = '{text}'")
 
             table = cur.fetchall()
             print(table)
@@ -263,6 +263,7 @@ class loadingWindow(QDialog, table):
         self.progressBar.setMinimum(0)
         self.progressBar.setMaximum(n)
         self.progressBar.setValue(0)
+
         
 
 #класс спизженый из документации pyqtgraph
@@ -399,9 +400,9 @@ class addWindow(QDialog, table):
                 error.show()
                 error.exec_()
             else:
-                with sq.connect("cars.db") as con:
+                with sq.connect("nurburgring.db") as con:
                     cur = sq.Cursor(con)
-                    cur.execute(f"INSERT INTO cars VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
+                    cur.execute(f"INSERT INTO main VALUES (?, ?, ?, ?, ?, ?)", (car, pilot, front, back, time, date))
                     con.commit()
                     cur.execute(f"SELECT * FROM pilots WHERE pilot = '{pilot}'")
                     if cur.fetchone() is None:
@@ -419,10 +420,10 @@ def timeCalculate(time):
     x = float(time[0]) + ((float(time[2:4]) * 10) / 600)
     return x
 
-with sq.connect("cars.db") as con:
+with sq.connect("nurburgring.db") as con:
         cur = sq.Cursor(con)
 
-        cur.execute("""CREATE TABLE IF NOT EXISTS cars (
+        cur.execute("""CREATE TABLE IF NOT EXISTS main (
             car TEXT,
             pilot TEXT,
             front TEXT,

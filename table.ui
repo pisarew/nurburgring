@@ -94,7 +94,7 @@ color: rgb(255, 255, 255);</string>
 color: rgb(255, 255, 255);</string>
       </property>
       <property name="text">
-       <string>Загрузить данные</string>
+       <string>Обновить данные</string>
       </property>
      </widget>
     </item>
