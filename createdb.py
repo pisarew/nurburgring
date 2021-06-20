@@ -60,15 +60,24 @@ def strcleaner(s_inp):
         return s_out
 
 def addCar(car, TIME, date):
-    with sq.connect("nurburgring.db") as con:
+    with sq.connect("nurburgring.db") as con:   
         cur = sq.Cursor(con)
         if car.find("Alfa Romeo") != -1:
             brand = car[:10]
             model = car[11:]
+        elif car.find("Aston Martin") != -1:
+            brand = car[:12]
+            model = car[13:]
+        elif car.find("MercedesAMG") != -1:
+            brand = car[:8]
+            model = car[8:]
+        elif car.find("MercedesBenz") != -1:
+            brand = car[:8]
+            model = car[12:]
         else:
             brand = car[:car.find(" ")]
             model = car[car.find(" "):]
-        cur.execute("INSERT INTO cars VALUES (?, ?, ?, ?)", (brand, model, TIME, date))
+        cur.execute("INSERT INTO cars VALUES (?, ?, ?, ?)", (strcleaner(brand), strcleaner(model), TIME, date))
         con.commit()
 
 
